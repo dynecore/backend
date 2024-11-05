@@ -1,15 +1,15 @@
+// server.js
 import express from 'express'
-import api from './src/routes/api.js'
 
-const app = express()
-const port = 3000
+const app = express();
+const PORT = 3000;  // Puerto de tu servidor Express
 
-app.get('/', (req, res) => {
-    res.send('express activo en /, soy api? v3')
-})
+// Endpoint simple para pruebas
+app.get('/api/data', (req, res) => {
+  res.json({ message: 'Este mensaje proviene del servidor Express.' });
+});
 
-app.use('/api', api)
-
-app.listen(port, () => {
-    console.log('server started')
-})
+// Iniciar el servidor
+app.listen(PORT, () => {
+  console.log(`Servidor Express corriendo en http://localhost:${PORT}`);
+});
