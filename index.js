@@ -1,13 +1,12 @@
 // server.js
 import express from 'express'
+import apiRoute from './src/routes/api.js';
 
 const app = express();
 const PORT = 3000;  // Puerto de tu servidor Express
 
 // Endpoint simple para pruebas
-app.get('/api/data', (req, res) => {
-  res.json({ message: 'Este mensaje proviene del servidor Express.' });
-});
+app.use('/api', apiRoute)
 
 // Iniciar el servidor
 app.listen(PORT, () => {

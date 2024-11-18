@@ -1,9 +1,13 @@
 import express from 'express'
 
-const api = express()
+const apiRoute = express()
 
-api.get('/', (req, res) => {
+apiRoute.get('/', (req, res) => {
     res.send('Express API en linea')
 })
 
-export default api
+apiRoute.get('/status', (req, res) => {
+    res.send({status: 'ONLINE'})
+})
+
+export default apiRoute
