@@ -13,7 +13,7 @@ apiRoute.get('/status', (req, res) => {
 
 apiRoute.post('/auth/signin', (req, res) => {
     console.log('loguin request received')
-    const duration = 1 * 60 * 1000;
+    const duration = 60 * 60 * 1000;
     //const duration = 60 * 60 * 24 * 5 * 1000 
     const sessionCookie = {randomworld: 'panconjamon', duration: duration, date: Date.now(), expiration: Date.now()+duration}
 
