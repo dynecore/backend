@@ -1,5 +1,6 @@
 import express from 'express'
-
+import { getAuth } from 'firebase-admin/auth'
+import { app } from '../firebase/server.js'
 
 const apiRoute = express()
 
@@ -11,8 +12,7 @@ apiRoute.get('/status', (req, res) => {
     res.send({status: 'ONLINE'})
 })
 
-apiRoute.post('/auth/signin', (req, res) => {
-    console.log('loguin request received')
+apiRoute.post('/auth/signinDemo', (req, res) => {
     const duration = 60 * 60 * 1000;
     //const duration = 60 * 60 * 24 * 5 * 1000 
     const sessionCookie = {randomworld: 'panconjamon', duration: duration, date: Date.now(), expiration: Date.now()+duration}
@@ -25,6 +25,37 @@ apiRoute.post('/auth/signin', (req, res) => {
     });
 
     res.redirect('/')
+})
+
+apiRoute.post('/auth/signin', async (req, res) => {
+    console.log('loguin request received')
+
+    const auth = getAuth(app)
+
+    const idToken = req.headers.authorization?.split("Bearer ")[1]
+
+    if (!idToken) {
+        return res.status(401).send("ERROR: NO SE DETECTÓ EL TOKEN DE AUTORIZACIÓN EN LA SOLICITUD")
+    }
+
+    try {
+        await auth.verifyIdToken(idToken)
+    } catch (error) {
+        return res.status(401).send("EL TOKEN RECIBIDO NO ES VALIDO")
+    }
+    
+    const duration = 60 * 60 * 1000;
+ 
+        const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn: duration })
+    
+    res.cookie('__session', sessionCookie, {
+        maxAge: duration,  // 5 días en milisegundos
+        httpOnly: true,
+        secure: true,
+        path: '/'
+    });
+
+    res.redirect('/dashboard')
 })
 
 apiRoute.get('/auth/getsession', (req, res) => {
@@ -67,8 +98,15 @@ apiRoute.get('/auth/getsession', (req, res) => {
 });
 
 apiRoute.post('/auth/signout', (req, res) => {
+    res.clearCookie('__sessiondemo');
+    res.clearCookie('__session');
+    res.redirect('/');
+})
+
+apiRoute.get('/auth/signout', (req, res) => {
     console.log('logout request received')
     res.clearCookie('__sessiondemo');
+    res.clearCookie('__session');
     res.redirect('/');
 })
 
