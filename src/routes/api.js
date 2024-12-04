@@ -1,6 +1,7 @@
 import express from 'express'
 import { getAuth } from 'firebase-admin/auth'
 import { app } from '../firebase/server.js'
+import apiStore from './store.js'
 
 const apiRoute = express()
 
@@ -109,5 +110,7 @@ apiRoute.get('/auth/signout', (req, res) => {
     res.clearCookie('__session');
     res.redirect('/');
 })
+
+apiRoute.use('/store', apiStore)
 
 export default apiRoute
